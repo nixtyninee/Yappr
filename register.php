@@ -3,7 +3,7 @@ session_start();
 
 $usersFile = 'data/users.xml';
 
-function saveUser($file, $username, $hashedPassword, $recoveryCode) {
+function saveUser($file, $username, $hashedPassword, $recoveryCode, $isAdmin) {
     if (file_exists($file)) {
         $xml = simplexml_load_file($file);
     } else {
@@ -13,6 +13,7 @@ function saveUser($file, $username, $hashedPassword, $recoveryCode) {
     $user->addChild('username', $username);
     $user->addChild('password', $hashedPassword);
     $user->addChild('recoveryCode', $recoveryCode);
+    $user->addChild('isAdmin', $isAdmin);
     $xml->asXML($file);
 }
 
@@ -27,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Hash the password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $recoveryCode = generateRecoveryCode();
+    $isAdmin = isset($_POST['isAdmin']) ? 'true' : 'false';
 
     $users = simplexml_load_file($usersFile);
     $usernames = [];
@@ -37,10 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (in_array($username, $usernames)) {
         $error = "Username already exists. Please choose another one.";
     } else {
-        saveUser($usersFile, $username, $hashedPassword, $recoveryCode);
+        saveUser($usersFile, $username, $hashedPassword, $recoveryCode, $isAdmin);
         $_SESSION['loggedin'] = true;
         $_SESSION['username'] = $username;
         $_SESSION['recoveryCode'] = $recoveryCode;
+        $_SESSION['isAdmin'] = $isAdmin;
         header('Location: recovery.php');
         exit();
     }
@@ -69,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="post" action="register.php">
             <input type="text" name="username" placeholder="Username" required><br>
             <input type="password" name="password" placeholder="Password" required><br>
+            <label><input type="checkbox" name="isAdmin"> Admin</label><br>
             <button type="submit">Register</button>
         </form>
     </div>
