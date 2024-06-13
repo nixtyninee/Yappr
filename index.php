@@ -71,6 +71,29 @@ function updatePostLikes($file, $postId, $action) {
     }
 }
 
+function deletePost($file, $postId) {
+    $xml = simplexml_load_file($file);
+    $dom = dom_import_simplexml($xml);
+    foreach ($xml->post as $index => $post) {
+        if (intval($post['id']) == intval($postId)) {
+            unset($xml->post[$index]);
+            $xml->asXML($file);
+            return;
+        }
+    }
+}
+
+function deleteUser($file, $username) {
+    $xml = simplexml_load_file($file);
+    foreach ($xml->user as $index => $user) {
+        if ((string)$user->username == $username) {
+            unset($xml->user[$index]);
+            $xml->asXML($file);
+            return;
+        }
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['content']) && isset($_SESSION['loggedin'])) {
         $content = $_POST['content'];
@@ -83,7 +106,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_GET['action']) && isset($_GET['post']) && isset($_SESSION['loggedin'])) {
     $postId = $_GET['post'];
     $action = $_GET['action'];
-    updatePostLikes('data/posts.xml', $postId, $action);
+    if ($action == 'delete' && isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] == 'true') {
+        deletePost('data/posts.xml', $postId);
+    } else {
+        updatePostLikes('data/posts.xml', $postId, $action);
+    }
+    header('Location: index.php');
+    exit();
+}
+
+if (isset($_GET['deleteUser']) && isset($_SESSION['loggedin']) && isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] == 'true') {
+    $usernameToDelete = $_GET['deleteUser'];
+    deleteUser('data/users.xml', $usernameToDelete);
     header('Location: index.php');
     exit();
 }
@@ -144,10 +178,27 @@ function userLikedPost($likedBy) {
                     <?php else: ?>
                         | <a href="index.php?action=like&post=<?php echo $post['id']; ?>" class="like-link">Like</a>
                     <?php endif; ?>
+                    <?php if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] == 'true'): ?>
+                        | <a href="index.php?action=delete&post=<?php echo $post['id']; ?>" class="delete-link">Delete</a>
+                    <?php endif; ?>
                 <?php endif; ?> 
                 (<?php echo $post->likes; ?> likes)</small>
             </div>
         <?php endforeach; ?>
+
+        <?php if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] == 'true'): ?>
+            <h2>Delete Users</h2>
+            <?php
+            $users = simplexml_load_file('data/users.xml');
+            foreach ($users->user as $user):
+                if ((string)$user->username !== $_SESSION['username']): ?>
+                    <p>
+                        <?php echo $user->username; ?>
+                        <a href="index.php?deleteUser=<?php echo $user->username; ?>" class="delete-user-link">Delete User</a>
+                    </p>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </body>
 </html>
