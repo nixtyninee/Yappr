@@ -30,41 +30,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($userFound) {
-        $success = "Password has been reset successfully.";
+        $success = "your password has been reset, you can now login";
     } else {
-        $error = "Invalid username or recovery code.";
+        $error = "incorrect username or recovery code";
     }
 }
 ?>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Forgot Password</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-    <header>
-        <h1>Social Network</h1>
-    </header>
-    <nav>
-        <a href="index.php">Home</a>
-        <a href="login.php">Login</a>
-        <a href="register.php">Register</a>
-    </nav>
-    <div class="container">
-        <h1>Forgot Password</h1>
+<?php require 'header.php'; ?>
+<div class="container">
+
+<div class="content">
+        <h3>account recovery</h3>
         <?php if (isset($error)): ?>
-            <p><?php echo $error; ?></p>
+            <?php echo $error; ?>
         <?php endif; ?>
         <?php if (isset($success)): ?>
-            <p><?php echo $success; ?></p>
+            <?php echo $success; ?>
         <?php endif; ?>
         <form method="post" action="forgot_password.php">
-            <input type="text" name="username" placeholder="Username" required><br>
-            <input type="text" name="recoveryCode" placeholder="Recovery Code" required><br>
-            <input type="password" name="newPassword" placeholder="New Password" required><br>
-            <button type="submit">Reset Password</button>
+            <div class="input-prepend">
+                <span class="add-on">@</span>
+                <input class="medium" name="username" size="20" type="text" placeholder="username" required/>
+                <input class="medium" name="recoveryCode" type="text" placeholder="recovery code" required/>
+                <input class="medium" name="newPassword" type="password" placeholder="new password" required/>
+                <button type="submit" class="btn primary">reset</button>
         </form>
+    </div>
     </div>
 </body>
 </html>

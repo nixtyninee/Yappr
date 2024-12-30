@@ -138,67 +138,45 @@ function userLikedPost($likedBy) {
 ?>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Social Network</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-    <header>
-        <h1>Social Network</h1>
-    </header>
-    <nav>
-        <a href="index.php">Home</a>
-        <?php if (isset($_SESSION['loggedin'])): ?>
-            <a href="user.php?username=<?php echo $_SESSION['username']; ?>">Profile</a>
-            <a href="logout.php">Logout</a>
-        <?php else: ?>
-            <a href="login.php">Login</a>
-            <a href="register.php">Register</a>
-        <?php endif; ?>
-    </nav>
-    <div class="container">
-        <?php if (isset($_SESSION['loggedin'])): ?>
-            <form method="post" action="index.php">
-                <textarea name="content" required></textarea><br>
-                <button type="submit">Post</button>
-            </form>
-        <?php else: ?>
-            <p><a href="login.php">Log in</a> or <a href="register.php">Register</a> to create a post.</p>
-        <?php endif; ?>
+<?php require 'header.php'; ?>
+<div class="container">
 
-        <h1>Latest Posts</h1>
-        <?php foreach ($posts as $post): ?>
-            <div class="post">
-                <h3><a href="user.php?username=<?php echo $post->author; ?>"><?php echo $post->author; ?></a></h3>
-                <p><?php echo $post->content; ?></p>
-                <small><?php echo $post->time; ?> 
-                <?php if (isset($_SESSION['loggedin'])): ?>
-                    <?php if (userLikedPost($post->likedBy)): ?>
-                        | <a href="index.php?action=unlike&post=<?php echo $post['id']; ?>" class="like-link">Unlike</a>
-                    <?php else: ?>
-                        | <a href="index.php?action=like&post=<?php echo $post['id']; ?>" class="like-link">Like</a>
-                    <?php endif; ?>
-                    <?php if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] == 'true'): ?>
-                        | <a href="index.php?action=delete&post=<?php echo $post['id']; ?>" class="delete-link">Delete</a>
-                    <?php endif; ?>
-                <?php endif; ?> 
-                (<?php echo $post->likes; ?> likes)</small>
+<div class="content">
+        <div class="row">
+        <div class="span10">
+        <h3>recent yaps</h3>
+    <?php foreach ($posts as $post): ?>
+        <div class="well" style="padding: 14px 19px;">
+        <p><b><a href="user.php?username=<?php echo $post->author; ?>"><?php echo $post->author; ?></a></b> <?php echo $post->content; ?></p>
+        <?php if (isset($_SESSION['loggedin'])) { ?>
+            <?php if (userLikedPost($post->likedBy)) { ?>
+                <a href="index.php?action=unlike&post=<?php echo $post['id']; ?>" class="btn small danger">▼ <?php echo $post->likes; ?></a>
+            <?php } else { ?>
+                <a href="index.php?action=like&post=<?php echo $post['id']; ?>" class="btn small success">▲ <?php echo $post->likes; ?></a>
+            <?php }; ?>
+        <?php }; ?> 
             </div>
-        <?php endforeach; ?>
-
-        <?php if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] == 'true'): ?>
-            <h2>Delete Users</h2>
+    <?php endforeach; ?>
+            </div>
+            <div class="span4">
+            <?php if (isset($_SESSION['loggedin'])): ?>
             <?php
-            $users = simplexml_load_file('data/users.xml');
-            foreach ($users->user as $user):
-                if ((string)$user->username !== $_SESSION['username']): ?>
-                    <p>
-                        <?php echo $user->username; ?>
-                        <a href="index.php?deleteUser=<?php echo $user->username; ?>" class="delete-user-link">Delete User</a>
-                    </p>
-                <?php endif; ?>
-            <?php endforeach; ?>
+            $phrases = ["welcome back", "what's up?", "what's going on?", "how have you been?", "what are you doing?"];
+            $random_phrase = $phrases[array_rand($phrases)];
+            ?>
+            <h3><?php echo $random_phrase; ?></h3>
+            <form method="post" action="index.php">
+            <textarea class="xxsmall" id="textarea" name="content" required></textarea>
+            <br>
+            <button type="submit" class="btn primary">post</button>
+        </form>
+        <?php else: ?>
+        <h3>welcome to yappr</h3>
+        <a href="login.php" class="btn small">login</a> or <a href="register.php" class="btn small">create an account</a>
         <?php endif; ?>
+        </div>
+        </div>
+            </div>
     </div>
 </body>
 </html>

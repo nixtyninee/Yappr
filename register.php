@@ -18,17 +18,16 @@ function saveUser($file, $username, $hashedPassword, $recoveryCode, $isAdmin) {
 }
 
 function generateRecoveryCode() {
-    return bin2hex(random_bytes(5)); // 10 characters long
+    return bin2hex(random_bytes(5)); 
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Hash the password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $recoveryCode = generateRecoveryCode();
-    $isAdmin = isset($_POST['isAdmin']) ? 'true' : 'false';
+    $isAdmin = 'false';
 
     $users = simplexml_load_file($usersFile);
     $usernames = [];
@@ -37,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (in_array($username, $usernames)) {
-        $error = "Username already exists. Please choose another one.";
+        $error = "this username is already in use, please pick another one";
     } else {
         saveUser($usersFile, $username, $hashedPassword, $recoveryCode, $isAdmin);
         $_SESSION['loggedin'] = true;
@@ -51,30 +50,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Register</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-    <header>
-        <h1>Social Network</h1>
-    </header>
-    <nav>
-        <a href="index.php">Home</a>
-        <a href="login.php">Login</a>
-        <a href="register.php">Register</a>
-    </nav>
-    <div class="container">
-        <h1>Register</h1>
+<?php require 'header.php'; ?>
+<div class="container">
+
+<div class="content">
+        <h3>create an account</h3>
         <?php if (isset($error)): ?>
-            <p><?php echo $error; ?></p>
+            <?php echo $error; ?>
         <?php endif; ?>
         <form method="post" action="register.php">
-            <input type="text" name="username" placeholder="Username" required><br>
-            <input type="password" name="password" placeholder="Password" required><br>
-            <label><input type="checkbox" name="isAdmin"> Admin</label><br>
-            <button type="submit">Register</button>
+            <div class="input-prepend">
+                <span class="add-on">@</span>
+                <input class="medium" name="username" size="20" type="text" placeholder="username" required/>
+                <input class="medium" name="password" type="password" placeholder="password" required/>
+                <button type="submit" class="btn primary">register</button>
         </form>
+    </div>
     </div>
 </body>
 </html>

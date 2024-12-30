@@ -98,41 +98,25 @@ function userLikedPost($likedBy) {
 ?>
 <!DOCTYPE html>
 <html>
-<head>
-    <title><?php echo $username; ?>'s Profile</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-    <header>
-        <h1>Social Network</h1>
-    </header>
-    <nav>
-        <a href="index.php">Home</a>
-        <?php if (isset($_SESSION['loggedin'])): ?>
-            <a href="user.php?username=<?php echo $_SESSION['username']; ?>">Profile</a>
-            <a href="logout.php">Logout</a>
-        <?php else: ?>
-            <a href="login.php">Login</a>
-            <a href="register.php">Register</a>
-        <?php endif; ?>
-    </nav>
+<?php require 'header.php'; ?>
     <div class="container">
-        <h1><?php echo $username; ?>'s Profile</h1>
-        <h2>Posts</h2>
-        <?php foreach ($posts as $post): ?>
-            <div class="post">
-                <p><?php echo $post->content; ?></p>
-                <small><?php echo $post->time; ?>
-                <?php if (isset($_SESSION['loggedin'])): ?>
-                    <?php if (userLikedPost($post->likedBy)): ?>
-                        | <a href="user.php?username=<?php echo $username; ?>&action=unlike&post=<?php echo $post['id']; ?>" class="like-link">Unlike</a>
-                    <?php else: ?>
-                        | <a href="user.php?username=<?php echo $username; ?>&action=like&post=<?php echo $post['id']; ?>" class="like-link">Like</a>
-                    <?php endif; ?>
-                <?php endif; ?>
-                (<?php echo $post->likes; ?> likes)</small>
+
+    <div class="content">
+
+        <h3><small>@</small><?php echo $username; ?></h3>
+    <?php foreach ($posts as $post): ?>
+        <div class="well" style="padding: 14px 19px;">
+        <p><b><a href="user.php?username=<?php echo $post->author; ?>"><?php echo $post->author; ?></a></b> <?php echo $post->content; ?></p>
+        <?php if (isset($_SESSION['loggedin'])) { ?>
+            <?php if (userLikedPost($post->likedBy)) { ?>
+                <a href="user.php?username=<?php echo $username; ?>&action=unlike&post=<?php echo $post['id']; ?>" class="btn small danger">▼ <?php echo $post->likes; ?></a>
+            <?php } else { ?>
+                <a href="user.php?username=<?php echo $username; ?>&action=like&post=<?php echo $post['id']; ?>" class="btn small success">▲ <?php echo $post->likes; ?></a>
+            <?php }; ?>
+        <?php }; ?> 
             </div>
-        <?php endforeach; ?>
+    <?php endforeach; ?>
     </div>
+            </div>
 </body>
 </html>

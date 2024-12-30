@@ -11,24 +11,17 @@ unset($_SESSION['recoveryCode']);
 ?>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Recovery Code</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-    <header>
-        <h1>Social Network</h1>
-    </header>
-    <nav>
-        <a href="index.php">Home</a>
-        <a href="login.php">Login</a>
-        <a href="register.php">Register</a>
-    </nav>
-    <div class="container">
-        <h1>Account Recovery</h1>
-        <p>Your recovery code is: <strong><?php echo $recoveryCode; ?></strong></p>
-        <p>Please save this code in a secure place. You will need it to reset your password if you forget it.</p>
-        <p><a href="index.php">Go to Home</a></p>
+<?php require 'header.php'; ?>
+<div class="container">
+
+<div class="content">
+        <h3>recovery code</h3>
+        your recovery code is <b><?php echo $recoveryCode; ?></b>
+        <br>
+        please save this code before exiting the page, if you lose this code you wont be able to reset your password if you forget it
+        <br>
+        <a href="index.php">continue</a>
+    </div>
     </div>
 </body>
 </html>

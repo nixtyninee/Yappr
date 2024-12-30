@@ -28,35 +28,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: index.php');
         exit();
     } else {
-        $error = "Invalid username or password";
+        $error = "incorrect username or password";
     }
 }
 ?>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-    <header>
-        <h1>Social Network</h1>
-    </header>
-    <nav>
-        <a href="index.php">Home</a>
-        <a href="register.php">Register</a>
-        <a href="forgot_password.php">Forgot Password</a>
-    </nav>
-    <div class="container">
-        <h1>Login</h1>
+<?php require 'header.php'; ?>
+<div class="container">
+
+<div class="content">
+        <h3>welcome back</h3>
         <?php if (isset($error)): ?>
-            <p><?php echo $error; ?></p>
+            <?php echo $error; ?>
         <?php endif; ?>
         <form method="post" action="login.php">
-            <input type="text" name="username" placeholder="Username" required><br>
-            <input type="password" name="password" placeholder="Password" required><br>
-            <button type="submit">Login</button>
+            <div class="input-prepend">
+                <span class="add-on">@</span>
+                <input class="medium" name="username" size="20" type="text" placeholder="username" required/>
+                <input class="medium" name="password" type="password" placeholder="password" required/>
+                <button type="submit" class="btn primary">login</button>
+                <a href="forgot_password.php" class="btn">reset password</a>
         </form>
+    </div>
     </div>
 </body>
 </html>
